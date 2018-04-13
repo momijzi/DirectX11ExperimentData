@@ -3,6 +3,7 @@
 #define OEMRESOURCE
 
 #include <forward_list>
+#include <fstream>
 #include <memory>
 #include <vector>
 #include <Windows.h>
@@ -110,3 +111,4 @@ private:
 #include"Material.hpp"
 #include"Camera.hpp"
 #include"Mesh.hpp"
+#include"Sprite.hpp"

@@ -95,20 +95,13 @@ public:
 			indices.clear();
 		}
 
-		CreatePlane(size, Float3(0.0f, 0.0f, -0.5f), false,
-			Float3(1.0f, 0.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f));
-		CreatePlane(size, Float3(0.0f, 0.0f, 0.5f), false,
-			Float3(-1.0f, 0.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f));
-		CreatePlane(size, Float3(0.5f, 0.0f, 0.0f), false,
-			Float3(0.0f, 0.0f, 1.0f), Float3(0.0f, 1.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f));
-		CreatePlane(size, Float3(-0.5f, 0.0f, 0.0f), false,
-			Float3(0.0f, 0.0f, -1.0f), Float3(0.0f, 1.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f));
-		CreatePlane(size, Float3(0.0f, 0.5f, 0.0f), false,
-			Float3(1.0f, 0.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f), Float3(0.0f, -1.0f, 0.0f));
-		CreatePlane(size, Float3(0.0f, -0.5f, 0.0f), false,
-			Float3(1.0f, 0.0f, 0.0f), Float3(0.0f, 0.0f, -1.0f), Float3(0.0f, 1.0f, 0.0f));
+		CreatePlane(size, Float3( 0.0f, 0.0f,-0.5f), false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f, 1.0f));
+		CreatePlane(size, Float3( 0.0f, 0.0f, 0.5f), false,Float3(-1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f));
+		CreatePlane(size, Float3( 0.5f, 0.0f, 0.0f), false,Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f));
+		CreatePlane(size, Float3(-0.5f, 0.0f, 0.0f), false,Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 1.0f, 0.0f, 0.0f));
+		CreatePlane(size, Float3( 0.0f, 0.5f, 0.0f), false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f,-1.0f, 0.0f));
+		CreatePlane(size, Float3( 0.0f,-0.5f, 0.0f), false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f));
 	}
-
 
 	void CreateTriangleBox(float x, float y, float z)
 	{
@@ -200,8 +193,7 @@ public:
 			//バッファの初期化
 			vertexBuffer.Release();
 			//バッファ作成
-			App::GetGraphicsDevice().CreateBuffer(&vertexBufferDesc, &vertexSubresourceData,
-				&vertexBuffer);
+			App::GetGraphicsDevice().CreateBuffer(&vertexBufferDesc, &vertexSubresourceData,&vertexBuffer);
 		}
 		if (indices.size() > 0)
 		{
@@ -214,12 +206,7 @@ public:
 			//バッファの初期化
 			indexBuffer.Release();
 			//バッファ作成
-			App::GetGraphicsDevice().CreateBuffer
-			(
-				&indexBufferDesc,//記述要素
-				&indexSubresourceData,//初期化要素
-				&indexBuffer//格納用ポインタアドレス
-			);
+			App::GetGraphicsDevice().CreateBuffer(&indexBufferDesc,&indexSubresourceData,&indexBuffer);
 		}
 		material.SetBuffer(&constant, sizeof(Constant));
 	}
