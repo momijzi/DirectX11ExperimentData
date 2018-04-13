@@ -25,7 +25,8 @@ int MAIN()
 	{
 		camera.Update();
 
-		sprite.angles.x += 0.1f;
+		if (App::GetKey(VK_RETURN))
+		sprite.angles.z += 0.1f;
 		sprite.Draw();
 
 		//mesh.angles.x += 0.01f;

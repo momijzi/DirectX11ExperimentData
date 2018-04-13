@@ -23,8 +23,9 @@
 class App final//final調べろー
 {
 public:
-	#include "Window.hpp"
+	#include"Window.hpp"
 	#include"Graphics.hpp"
+	#include"Input.hpp"
 
 	static constexpr wchar_t* NAME = L"DirectX11";
 
@@ -33,6 +34,7 @@ public:
 	static bool Refresh()
 	{
 		GetGraphics().Update();
+		GetInput().Update();
 		return GetWindow().Update();
 	}
 	//初期化関数
@@ -93,18 +95,51 @@ public:
 	{
 		return GetGraphics().GetMemory();
 	}
+	//キー入力-------------------------------------------
+	static bool GetKey(int VK_CODE)
+	{
+		return GetInput().GetKey(VK_CODE);
+	}
+	static bool GetKeyUp(int VK_CODE)
+	{
+		return GetInput().GetKeyUp(VK_CODE);
+	}
+	static bool GetKeyDown(int VK_CODE)
+	{
+		return GetInput().GetKeyDown(VK_CODE);
+	}
+	static Float2 GetMousePosition()
+	{
+		return GetInput().GetMousePosition();
+	}
+	static void SetMousePosition(float x, float y)
+	{
+		GetInput().SetMousePosition(x, y);
+	}
+	static void SetShowCursor(bool isShowCursor)
+	{
+		GetInput().SetShowCursor(isShowCursor);
+	}
+
+
 private:
-	//ウィンドウのデータを取得するためのポインタ―
+	//ウィンドウのデータ取得用ポインタ
 	static Window& GetWindow()
 	{
 		static std::unique_ptr<Window> window(new Window());
 		return *window.get();
 	}
-	//グラフィックのデータを取得するためのポインタ―
+	//グラフィックのデータ取得用ポインタ
 	static Graphics& GetGraphics()
 	{
 		static std::unique_ptr<Graphics> graphics(new Graphics());
 		return *graphics.get();
+	}
+	//キー入力のデータ取得用ポインタ
+	static Input& GetInput()
+	{
+		static std::unique_ptr<Input> input(new Input());
+		return *input.get();
 	}
 };
 #include"Texture.hpp"
