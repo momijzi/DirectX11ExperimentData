@@ -3,16 +3,16 @@ class Material
 public:
 	Material()
 	{
-		App::Initialize();
+		Initialize();
 	}
 	Material(char* source)
 	{
-		App::Initialize();
+		Initialize();
 		Create(source);
 	}
 	Material(const wchar_t* const filePath)
 	{
-		App::Initialize();
+		Initialize();
 		Load(filePath);
 	}
 
@@ -53,13 +53,6 @@ public:
 
 	void Attach()
 	{
-		if (buffer != nullptr)
-		{
-			App::GetGraphicsContext().UpdateSubresource(constantBuffer, 0,
-				nullptr, buffer, 0, 0);
-			App::GetGraphicsContext().VSSetConstantBuffers(0, 1, &constantBuffer.p);
-		}
-
 		if(vertexShader != nullptr)
 		App::GetGraphicsContext().VSSetShader(vertexShader, nullptr, 0);
 
@@ -68,6 +61,24 @@ public:
 
 		if(inputLayout != nullptr)
 		App::GetGraphicsContext().IASetInputLayout(inputLayout);
+
+		if (buffer != nullptr)
+		{
+			App::GetGraphicsContext().UpdateSubresource(constantBuffer, 0,nullptr, buffer, 0, 0);
+			App::GetGraphicsContext().VSSetConstantBuffers(0, 1, &constantBuffer.p);
+			App::GetGraphicsContext().HSSetConstantBuffers(0, 1, &constantBuffer.p);
+			App::GetGraphicsContext().DSSetConstantBuffers(0, 1, &constantBuffer.p);
+			App::GetGraphicsContext().GSSetConstantBuffers(0, 1, &constantBuffer.p);
+			App::GetGraphicsContext().PSSetConstantBuffers(0, 1, &constantBuffer.p);
+		}
+
+		for (int i = 0; i < 10; i++)
+		{
+			if (textures[i] != nullptr)
+			{
+				textures[i]->Attach(i);
+			}
+		}
 	}
 
 private:
@@ -78,6 +89,16 @@ private:
 	ATL::CComPtr<ID3D11PixelShader> pixelShader = nullptr;
 	ATL::CComPtr<ID3D11InputLayout> inputLayout = nullptr;
 	ATL::CComPtr<ID3D11Buffer> constantBuffer = nullptr;
+
+	void Initialize()
+	{
+		App::Initialize();
+
+		for (int i = 0; i < 10; i++)
+		{
+			textures[i] = nullptr;
+		}
+	}
 
 	void Create(const char* source)
 	{

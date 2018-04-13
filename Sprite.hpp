@@ -27,7 +27,16 @@ public:
 
 		Float2 textureSize(texture.GetSize().x, texture.GetSize().y);
 
+		mesh.Apply();
 	}
+	void Draw()
+	{
+		mesh.position = position;
+		mesh.angles = angles = angles;
+		mesh.scale = scale;
+		mesh.Draw();
+	}
+
 private:
 	Mesh mesh;
 

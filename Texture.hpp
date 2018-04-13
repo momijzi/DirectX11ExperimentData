@@ -8,12 +8,10 @@ public:
 	Texture(const wchar_t* const filePath)
 	{
 		App::Initialize();
-
 		Load(filePath);
 	}
 	~Texture()
 	{
-
 	}
 
 	void Load(const wchar_t* const filePath)
