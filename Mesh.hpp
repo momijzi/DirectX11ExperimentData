@@ -16,6 +16,21 @@ public:
 	Mesh()
 	{
 		App::Initialize();
+
+		position = Float3(0.0f, 0.0f, 0.0f);
+		angles = Float3(0.0f, 0.0f, 0.0f);
+		scale = Float3(1.0f, 1.0f, 1.0f);
+
+		material = Material(L"Shader.hlsl");
+
+		SetCullingMode(D3D11_CULL_BACK);
+
+		CreateCube();
+		Apply();
+	}
+	Mesh(int mode)
+	{
+		App::Initialize();
 		
 		position = Float3(0.0f, 0.0f, 0.0f);
 		angles = Float3(0.0f, 0.0f, 0.0f);
@@ -25,8 +40,23 @@ public:
 
 		SetCullingMode(D3D11_CULL_BACK);
 
-		CreatePlane(Float2(0.5f,0.5f), Float3(0.0f, 0.0f, -0.5f), false, Float3(1.0f, 0.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f));
+		//作成したい物に合わせて引数を変えること
+		switch (mode)
+		{
+			case 0:
+				//軸ずらしについてはまだ
+				CreateCube(Float2(0.5f, 0.5f));//Float2(横幅のサイズ、縦幅のサイズ)
+				break;
+			case 1:
+				CreatePlane(Float2(0.5f, 0.5f), Float3(0.0f, 0.0f, -0.5f), false, Float3(1.0f, 0.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f));
+				break;
+			case 2:
 
+				break;
+			default:
+
+				break;
+		}
 		Apply();
 	}
 
