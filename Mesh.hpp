@@ -10,7 +10,7 @@ public:
 
 	std::vector<Vertex> vertices;
 	std::vector<UINT> indices;
-	Vertex setVertex[36] = {};
+
 	Material material;
 
 	Mesh()
@@ -73,9 +73,9 @@ public:
 		//ベクタに要素を追加
 		//ここをいじれば描画する物を変えることが可能だろう
 		//できれば引数を使って動的に作りたい
-		vertices.push_back({ Float3(0.0f, 1.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f) });
-		vertices.push_back({ Float3(1.0f, -1.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f) });
-		vertices.push_back({ Float3(-1.0f, -1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f) });
+		vertices.push_back(Vertex(Float3(0.0f, 1.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f),Float2(0.0f,0.0f)));
+		vertices.push_back(Vertex(Float3(1.0f, -1.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f),Float2(1.0f,0.0f)));
+		vertices.push_back(Vertex(Float3(-1.0f, -1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f),Float2(0.0f,1.0f)));
 	}
 
 	void CreatePlane(
@@ -84,7 +84,7 @@ public:
 		bool souldclear = true,
 		Float3 leftDirection = Float3(1.0f, 0.0f, 0.0f),
 		Float3 upDirection = Float3(0.0f, 1.0f, 0.0f),
-		Float3 forwardDirection = Float3(0.0f, 0.0f, 0.0f)
+		Float3 forwardDirection = Float3(0.0f, 0.0f, 1.0f)
 	)
 	{
 		if (souldclear)
@@ -96,14 +96,20 @@ public:
 		upDirection = DirectX::XMVector3Normalize(upDirection);
 		forwardDirection = DirectX::XMVector3Normalize(forwardDirection);
 
-		vertices.push_back({ leftDirection * -size.x + upDirection *  size.y + offset,
-			-forwardDirection });
-		vertices.push_back({ leftDirection *  size.x + upDirection *  size.y + offset,
-			-forwardDirection });
-		vertices.push_back({ leftDirection * -size.x + upDirection * -size.y + offset,
-			-forwardDirection });
-		vertices.push_back({ leftDirection *  size.x + upDirection * -size.y + offset,
-			-forwardDirection });
+		//
+		vertices.push_back(Vertex(
+			leftDirection * -size.x + upDirection *  size.y + offset,
+			-forwardDirection, 
+			Float2(
+				0.25f,//x 1をその画像の最大として分割される
+				0.0f//y　上と同じ
+			)));
+		vertices.push_back(Vertex(leftDirection *  size.x + upDirection *  size.y + offset,
+			-forwardDirection, Float2(0.5f, 0.0f)));
+		vertices.push_back(Vertex(leftDirection * -size.x + upDirection * -size.y + offset,
+			-forwardDirection, Float2(0.25f, 0.5f)));
+		vertices.push_back(Vertex(leftDirection *  size.x + upDirection * -size.y + offset,
+			-forwardDirection, Float2(0.5f, 0.5f)));
 
 		size_t indexOffset = vertices.size() - 4;
 		indices.push_back(indexOffset + 0);
@@ -133,6 +139,7 @@ public:
 		CreatePlane(size, Float3( 0.0f,-0.5f, 0.0f), false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f));
 	}
 
+	/*
 	void CreateTriangleBox(float x, float y, float z)
 	{
 		vertices.clear();
@@ -196,7 +203,7 @@ public:
 			vertices.push_back(setVertex[i]);
 		}
 	}
-
+	*/
 
 	void SetCullingMode(D3D11_CULL_MODE culingMode)
 	{

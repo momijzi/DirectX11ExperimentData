@@ -465,4 +465,12 @@ struct Vertex
 {
 	Float3 position;
 	Float3 normal;
+	Float3 uv;
+
+	Vertex(Float3 position, Float3 normal, Float2 uv)
+	{
+		this->position = position;
+		this->normal = normal;
+		this->uv = uv;
+	}
 };
