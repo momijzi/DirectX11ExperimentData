@@ -7,11 +7,41 @@ public:
 	}
 	Texture(const wchar_t* const filePath)
 	{
+		Release();
 		App::Initialize();
 		Load(filePath);
 	}
 	~Texture()
 	{
+	}
+
+	void Release()
+	{
+		uv = Float2(1.0f, 1.0f);
+		numUV = Float2(0.0f, 0.0f);
+	}
+	//引数分だけ分割して分割一つの大きさを入れる
+	void SetDivide(Float2 uv)
+	{
+		if (uv.x >= 0 && uv.y >= 0)
+			this->uv = uv;
+	}
+	//描画したい場所
+	void SetUVNum(Float2 numUV)
+	{
+		//分割数は1以上
+		if (numUV.x >= 0 && numUV.y >= 0)
+			this->numUV = numUV;
+	}
+	//分割している数
+	Float2 GetNumUV()
+	{
+		return numUV;
+	}
+	//分割した画像の指定したい場所のデータ
+	Float2 GetUV()
+	{
+		return uv;
 	}
 
 	void Load(const wchar_t* const filePath)
@@ -163,10 +193,12 @@ public:
 			&samplerState	//作成されるサンプラーステートobjへのポインタのアドレス
 		);
 	} 
+
 	DirectX::XMINT2 GetSize() const
 	{
 		return size;
 	}
+
 	void Attach(int slot)
 	{
 		if (texture == nullptr)
@@ -186,8 +218,12 @@ public:
 		);
 	}
 
+
 private:
 	DirectX::XMINT2 size;
+	Float2 uv;			//分割した場合どこを描画するか
+	Float2 numUV;		//画像分割数 1から分割数-1
+
 	ATL::CComPtr<ID3D11Texture2D> texture = nullptr;
 	ATL::CComPtr<ID3D11ShaderResourceView> shaderResourceView = nullptr;
 	ATL::CComPtr<ID3D11SamplerState> samplerState = nullptr;

@@ -1,38 +1,44 @@
 class Sprite
 {
 public:
-	Float3 position;
-	Float3 angles;
-	Float3 scale;
-	Texture texture;
+	Float3 position;	//描画する位置
+	Float3 angles;		//描画する画像の角度
+	Float3 scale;		//画像のサイズ
 
 	Sprite()
 	{
 		Initialize();
 	}
-	Sprite(const wchar_t* const filePath)
+	/*Sprite(const wchar_t* const filePath)
 	{
 		Initialize();
-		Load(filePath);
-	}
+		Load(filePath,0);
+	}*/
 	~Sprite()
 	{
 	}
-
-	void Load(const wchar_t* const filePath)
+	//スプライトの描画
+	//filePathはテクスチャのファイルを渡す　例.(L"Texture/texture.jpg");
+	//modeは描画したい形の設定
+	void CreateData(Texture* tex,int mode)
 	{
-		texture.Load(filePath);
+		mesh.material.SetTexture(0, tex);
 
-		mesh.material.SetTexture(0, &texture);
-
-		Float2 textureSize(texture.GetSize().x, texture.GetSize().y);
-
+		switch (mode)
+		{
+			case 0://UI		座標を追加しろー
+				mesh.CreatePlane(Float2(0.5f, 0.5f),tex->GetNumUV(), tex->GetUV());
+				break;
+			case 1://四角形	上に同じ
+				mesh.CreateCube(Float2(0.5f, 0.5f),tex->GetNumUV(), tex->GetUV());
+				break;
+		}
 		mesh.Apply();
 	}
 	void Draw()
 	{
 		mesh.position = position;
-		mesh.angles = angles = angles;
+		mesh.angles = angles;
 		mesh.scale = scale;
 		mesh.Draw();
 	}
@@ -44,10 +50,11 @@ private:
 	{
 		App::Initialize();
 
+		//初期化
 		position = Float3(0.0f, 0.0f, 0.0f);
 		angles = Float3(0.0f, 0.0f, 0.0f);
 		scale = Float3(1.0f, 1.0f, 1.0f);
-
+		
 		mesh.material = Material(
 			"cbuffer Object : register(b0)"
 			"{"
