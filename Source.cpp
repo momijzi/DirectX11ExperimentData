@@ -41,12 +41,12 @@ int MAIN()
 	{
 		if (App::GetKey(VK_RIGHT))
 		{
-			camera.position.x += 0.1f;
+			camera.position.z += 0.1f;
 			player.PlayerMove(Float3(0.3f,0.0f, 0.0f));
 		}
 		else if (App::GetKey(VK_LEFT))
 		{
-			camera.position.x-= 0.1f;
+			camera.position.z-= 0.1f;
 			player.PlayerMove(Float3(-0.3f, 0.0f, 0.0f));
 		}
 		if (App::GetKey(VK_UP))
@@ -69,7 +69,7 @@ int MAIN()
 			camera.angles.x++;
 		camera.Update();
 
-		if (App::GetKey('L'))
+		/*if (App::GetKey('L'))
 		{
 			player.leftArm.angles.x += (float)(PI / 180 * 1);
 		}
@@ -103,7 +103,7 @@ int MAIN()
 			}
 		}
 
-		player.Update();
+		player.Update();*/
 		/*if (App::GetKeyDown(VK_SPACE))
 		{
 			num+= 1.0f;

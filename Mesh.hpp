@@ -60,7 +60,6 @@ public:
 			vertices.clear();
 			indices.clear();
 		}
-		//単位ベクトルに変換
 		leftDirection = DirectX::XMVector3Normalize(leftDirection);
 		upDirection = DirectX::XMVector3Normalize(upDirection);
 		forwardDirection = DirectX::XMVector3Normalize(forwardDirection);
@@ -230,7 +229,6 @@ public:
 			DirectX::XMMatrixRotationX(angles.x) *
 			DirectX::XMMatrixRotationZ(angles.z) *
 			DirectX::XMMatrixTranslation(position.x, position.y, position.z )
-			
 		);
 		App::GetGraphicsContext().RSSetState(rasterizerState);
 
@@ -259,5 +257,4 @@ private:
 	ATL::CComPtr<ID3D11Buffer> indexBuffer = nullptr;
 	ATL::CComPtr<ID3D11RasterizerState> rasterizerState = nullptr;
 
-	
 };

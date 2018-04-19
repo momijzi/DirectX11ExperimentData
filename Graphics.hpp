@@ -53,18 +53,11 @@ public:
 		}
 		context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
-		//レンダーターゲットののブレンディングステートの記述をする
-		D3D11_BLEND_DESC blendDesc = {};
-		blendDesc.RenderTarget[0].BlendEnable = true;					//ブレンディングを有効（または無効）にする
-																		//ブレンディングオプションの設定
-		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;		//最初のRGBデータソースを指定する
-		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;//二番目のRGBデータソースを指定する
-		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;			//ブレンディング処理のRGBデータの組み合わせ方の定義
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;		//最初のアルファデータソースを指定する
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;		//二番目のアルファデータソースを指定する
-		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ブレンディング処理のアルファデータソースの組み合わせ方法を定義する
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;	//書き込みマスク
-	
+		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+			reinterpret_cast<void**>(&renderTexture));
+
+		device->CreateRenderTargetView(renderTexture, nullptr, &renderTargetView);
+		
 		//バッファーリソースのデータの設定
 		D3D11_BUFFER_DESC constantBufferDesc = {};
 		constantBufferDesc.ByteWidth = sizeof(Constant);
@@ -74,12 +67,47 @@ public:
 
 		App::AddProcedure(this);
 
-		CreateRenderTarget();
+		D3D11_TEXTURE2D_DESC depthStencilTextureDesc = {};
+		depthStencilTextureDesc.Width = App::GetWindowSize().x;
+		depthStencilTextureDesc.Height = App::GetWindowSize().y;
+		depthStencilTextureDesc.MipLevels = 1;
+		depthStencilTextureDesc.ArraySize = 1;
+		depthStencilTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+		depthStencilTextureDesc.SampleDesc.Count = 1;
+		depthStencilTextureDesc.SampleDesc.Quality = 0;
+		depthStencilTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+		device->CreateTexture2D(
+			&depthStencilTextureDesc,
+			nullptr,
+			&depthStencilTexture
+		);
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+		depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+
+		device->CreateDepthStencilView(
+			depthStencilTexture,
+			&depthStencilViewDesc,
+			&depthStencilView
+		);
+
+		D3D11_VIEWPORT viewPort = {};
+		viewPort.TopLeftX = 0.0f;
+		viewPort.TopLeftY = 0.0f;
+		viewPort.Width = static_cast<float>(App::GetWindowSize().x);
+		viewPort.Height = static_cast<float>(App::GetWindowSize().y);
+
+		viewPort.MinDepth = 0.0f;
+		viewPort.MaxDepth = 1.0f;
+		context->RSSetViewports(1, &viewPort);
 	}
 
 	~Graphics()
 	{
-
+		App::RemoveProcedure(this);
 	}
 	ID3D11Device& GetDevice() const
 	{
@@ -97,23 +125,24 @@ public:
 	void Update()
 	{
 		swapChain->Present(1, 0);
+
 		context->UpdateSubresource(constantBuffer, 0, nullptr, &constant, 0, 0);//リソースのサブリソース内のデータ更新
-		
-		context->VSSetConstantBuffers(1, 1, &constantBuffer.p);//定数バッファの設定
-		context->HSSetConstantBuffers(1, 1, &constantBuffer.p);//ハルシェーダーステージで使用される定数バッファの設定
-		context->DSSetConstantBuffers(1, 1, &constantBuffer.p);//ドメインシェーダーステージで使用される定数バッファの設定
-		context->GSSetConstantBuffers(1, 1, &constantBuffer.p);//ジオメトリシェーダのパイプラインステージで使用される定数バッファの設定
-		context->PSSetConstantBuffers(1, 1, &constantBuffer.p);//ピクセルシェーダーのパイプラインステージで使用される定数バッファの設定
-		context->OMSetRenderTargets//レンダーターゲットの設定
-		(
-			1,
-			&renderTargetView.p, 
-			depthStencilView
-		);
+		context->VSSetConstantBuffers(1, 1, &constantBuffer.p);					//定数バッファの設定
+		context->HSSetConstantBuffers(1, 1, &constantBuffer.p);					//ハルシェーダーステージで使用される定数バッファの設定
+		context->DSSetConstantBuffers(1, 1, &constantBuffer.p);					//ドメインシェーダーステージで使用される定数バッファの設定
+		context->GSSetConstantBuffers(1, 1, &constantBuffer.p);					//ジオメトリシェーダのパイプラインステージで使用される定数バッファの設定
+		context->PSSetConstantBuffers(1, 1, &constantBuffer.p);					//ピクセルシェーダーのパイプラインステージで使用される定数バッファの設定
+		context->OMSetRenderTargets(1,&renderTargetView.p,depthStencilView);	//レンダーターゲットの設定
 
 		static float color[4] = { 1.0f,1.0f,1.0f ,1.0f };
 		//レンダーターゲットのすべてを一つの色にする
 		context->ClearRenderTargetView(renderTargetView, color);
+		context->ClearDepthStencilView
+		(
+			depthStencilView,
+			D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+			1.0f, 0
+		);
 	}
 
 private:
@@ -129,23 +158,12 @@ private:
 	ATL::CComPtr<ID3D11DeviceContext> context = nullptr;
 	ATL::CComPtr<ID3D11RenderTargetView> renderTargetView = nullptr;
 	ATL::CComPtr<ID3D11Texture2D> renderTexture = nullptr;
-	ATL::CComPtr<ID3D11DepthStencilView> depthStencilView = nullptr;
 	ATL::CComPtr<ID3D11Buffer> constantBuffer = nullptr;
 	ATL::CComPtr<ID3D11BlendState> blendState = nullptr;
+	ATL::CComPtr<ID3D11DepthStencilView> depthStencilView = nullptr;
+	ATL::CComPtr<ID3D11Texture2D> depthStencilTexture = nullptr;
 
-	void CreateRenderTarget()
-	{
-		D3D11_VIEWPORT viewPort = {};
-		viewPort.Width = static_cast<float>(App::GetWindowSize().x);
-		viewPort.Height = static_cast<float>(App::GetWindowSize().y);
-		context->RSSetViewports(1, &viewPort);
-
-		swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&renderTexture));
-		device->CreateRenderTargetView(renderTexture, nullptr, &renderTargetView);
-
-		constant.view = DirectX::XMMatrixIdentity();
-		constant.projection = DirectX::XMMatrixOrthographicLH(static_cast<float>(App::GetWindowSize().x), static_cast<float>(App::GetWindowSize().y), -10000.0f, 10000.0f);
-	}
+	
 	void OnProceed(HWND, UINT message, WPARAM, LPARAM) override
 	{
 		if (message != WM_SIZE)
@@ -167,6 +185,5 @@ private:
 		context->Flush();
 		swapChain->ResizeBuffers(swapChainDesc.BufferCount, App::GetWindowSize().x, App::GetWindowSize().y, swapChainDesc.BufferDesc.Format, 0);
 
-		CreateRenderTarget();
 	}
 };

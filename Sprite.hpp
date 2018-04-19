@@ -150,7 +150,7 @@ private:
 			"}"
 			"float4 PS(Pixel pixel) : SV_TARGET"
 			"{"
-			"    return float4(texture0.Sample(sampler0, pixel.uv).rgb,1);"
+			"    return texture0.Sample(sampler0, pixel.uv);"
 			"}"
 		);
 	}
