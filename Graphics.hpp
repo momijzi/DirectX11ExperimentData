@@ -166,5 +166,7 @@ private:
 		renderTexture.Release();
 		context->Flush();
 		swapChain->ResizeBuffers(swapChainDesc.BufferCount, App::GetWindowSize().x, App::GetWindowSize().y, swapChainDesc.BufferDesc.Format, 0);
+
+		CreateRenderTarget();
 	}
 };

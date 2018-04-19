@@ -1,6 +1,9 @@
 #pragma once
 
 #define OEMRESOURCE
+//‹v•Û“c_04_10------------------------------------------
+#define PI 3.141592653589793
+//------------------------------------------‹v•Û“c_04_10
 
 #include <forward_list>
 #include <fstream>
@@ -148,3 +151,4 @@ private:
 #include"Mesh.hpp"
 #include"Sprite.hpp"
 #include"OBB.hpp"
+#include"Player.hpp"

@@ -138,8 +138,10 @@
     <ClInclude Include="Material.hpp" />
     <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="OBB.hpp" />
+    <ClInclude Include="Player.hpp" />
     <ClInclude Include="Sprite.hpp" />
     <ClInclude Include="Texture.hpp" />
+    <ClInclude Include="Trick.hpp" />
     <ClInclude Include="Utility.hpp" />
     <ClInclude Include="Window.hpp" />
   </ItemGroup>

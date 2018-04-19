@@ -34,7 +34,7 @@ public:
 			DirectX::XMMatrixPerspectiveFovLH
 			(
 				DirectX::XMConvertToRadians(fieldOfView),//視野角
-				App::GetWindowSize().x / App::GetWindowSize().y,//ビュー空間のアスペクト比X:Y
+				App::GetWindowSize().x / (float)App::GetWindowSize().y,//ビュー空間のアスペクト比X:Y
 				nearClip,//クリッピング面の近面
 				farClip//				   遠面
 			)

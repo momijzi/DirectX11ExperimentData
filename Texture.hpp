@@ -33,12 +33,12 @@ public:
 		if (numUV.x >= 0 && numUV.y >= 0)
 			this->numUV = numUV;
 	}
-	//分割している数
+	//現在指定している座標
 	Float2 GetNumUV()
 	{
 		return numUV;
 	}
-	//分割した画像の指定したい場所のデータ
+	//分割している数
 	Float2 GetUV()
 	{
 		return uv;
@@ -84,12 +84,15 @@ public:
 			&height//		 高さ
 		);
 
-		WICPixelFormatGUID pixelFormat;
+		WICPixelFormatGUID pixelFormat = {};
 		frame->GetPixelFormat	//ビットマップソースのピクセル形式を取得します
 		(
 			&pixelFormat		//ビットマップが格納されているピクセル形式のGUIDを受け取る
 		);
-		std::unique_ptr<BYTE[]> buffer(new BYTE[width * height * 4]);
+		std::unique_ptr<BYTE[]> buffer//バイト型の配列を動的確保
+		(
+			new BYTE[width * height * 4]
+		);
 
 		if (pixelFormat != GUID_WICPixelFormat32bppRGBA)
 		{
@@ -150,6 +153,7 @@ public:
 		textureSubresourceData.SysMemPitch = width * 4;					//テクスチャによる一本の線の先端から隣の線までの距離（バイト単位）
 		textureSubresourceData.SysMemSlicePitch = width * height * 4;	//一つの深度レベルから隣の深度レベルまでの距離（バイト単位）
 		
+		texture.Release();
 		//上のデータを使い2Dテクスチャの配列を作成する
 		App::GetGraphicsDevice().CreateTexture2D
 		(

@@ -1,13 +1,10 @@
-//久保田_04_10------------------------------------------
-#define PI 3.141592653589793
-//------------------------------------------久保田_04_10
-
 class Sprite
 {
 public:
 	Float3 position;	//描画する位置
-	Float3 angles;		//描画する物の角度
+	Float3 angles;		//描画する物の角度//ラジアン角
 	Float3 scale;		//描画する物のサイズ
+	Float3 axis;		//軸をその物体のどれだけずらしているか
 
 	//久保田_04_10------------------------------------------
 	//有向境界ボックスで使用するデータ
@@ -41,13 +38,15 @@ public:
 	{
 		mesh.material.SetTexture(0, tex);
 
+		Float2 texSize(tex->GetSize().x, tex->GetSize().y);
+		
 		switch (mode)
 		{
 			case 0://UI		座標を追加しろー
-				mesh.CreatePlane(Float2(0.5f, 0.5f),tex->GetNumUV(), tex->GetUV());
+				mesh.CreatePlane(texSize / 2.0f,tex->GetNumUV(), tex->GetUV());
 				break;
 			case 1://四角形	上に同じ
-				mesh.CreateCube(Float2(0.5f, 0.5f),tex->GetNumUV(), tex->GetUV());
+				mesh.CreateCube(tex->GetNumUV(), tex->GetUV());
 				break;
 		}
 		mesh.Apply();
@@ -57,6 +56,7 @@ public:
 		mesh.position = position;
 		mesh.angles = angles;
 		mesh.scale = scale;
+		mesh.axis = axis;
 		mesh.Draw();
 		//久保田_04_10------------------------------------------
 		//現在はデバッグ用に必ず処理されるDraw関数の中に記述
@@ -150,7 +150,7 @@ private:
 			"}"
 			"float4 PS(Pixel pixel) : SV_TARGET"
 			"{"
-			"    return texture0.Sample(sampler0, pixel.uv);"
+			"    return float4(texture0.Sample(sampler0, pixel.uv).rgb,1);"
 			"}"
 		);
 	}

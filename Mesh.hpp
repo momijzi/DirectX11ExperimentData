@@ -4,6 +4,7 @@ public:
 	Float3 position;	//座標
 	Float3 angles;		//角度
 	Float3 scale;		//大きさ
+	Float3 axis;		//物体の軸の座標
 
 	std::vector<Vertex> vertices;
 	std::vector<UINT> indices;
@@ -17,6 +18,7 @@ public:
 		position = Float3(0.0f, 0.0f, 0.0f);
 		angles = Float3(0.0f, 0.0f, 0.0f);
 		scale = Float3(1.0f, 1.0f, 1.0f);
+		axis = Float3(0.0f, 0.0f, 0.0f);
 
 		material = Material(L"Shader.hlsl");
 
@@ -44,14 +46,14 @@ public:
 	//四角のボックス作成用関数
 	void CreatePlane(
 		Float2 size = Float2(0.5f, 0.5f),					//そのままサイズ
-		Float2 uv = Float2(0.0f, 0.0f),						//表示したいUIの場所　例 uv(1,0); これで一つ右であり一番上の画像が呼べる
-		Float2 numUV = Float2(1.0f, 1.0f),					//1 / 分割数の値のxy これがないと画像の指定が無理―
+		Float2 uv = Float2(1.0f, 1.0f),						//表示したいUIの場所　例 uv(1,0); これで一つ右であり一番上の画像が呼べる
+		Float2 numUV = Float2(0.0f, 0.0f),					//1 / 分割数の値のxy これがないと画像の指定が無理―
 		bool souldclear = true,								//知らんtrueじゃないと確かダメ
 		Float3 leftDirection = Float3(1.0f, 0.0f, 0.0f),	//xの座標
 		Float3 upDirection = Float3(0.0f, 1.0f, 0.0f),		//yの座標
 		Float3 offset = Float3(0.0f, 0.0f, 0.0f),			//zの座標
 		Float3 forwardDirection = Float3(0.0f, 0.0f, 1.0f)	//normal関係　よくわかめ
-	)
+		)
 	{
 		if (souldclear)
 		{
@@ -82,9 +84,9 @@ public:
 	}
 
 	void CreateCube(
-		Float2 size = Float2(0.5f, 0.5f),
-		Float2 uv = Float2(0.0f, 0.0f),
-		Float2 numUV = Float2(1.0f, 1.0f),
+		Float2 uv = Float2(1.0f, 1.0f),
+		Float2 numUV = Float2(0.0f, 0.0f),
+		Float3 axis = Float3(0.0f,0.0f,0.0f),
 		bool souldClear = true
 	)
 	{
@@ -94,12 +96,12 @@ public:
 			indices.clear();
 		}
 
-		CreatePlane(size, uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f,-0.5f), Float3( 0.0f, 0.0f, 1.0f));
-		CreatePlane(size, uv, numUV, false,Float3(-1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f, 0.5f), Float3( 0.0f, 0.0f,-1.0f));
-		CreatePlane(size, uv, numUV, false,Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.5f, 0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f));
-		CreatePlane(size, uv, numUV, false,Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3(-0.5f, 0.0f, 0.0f), Float3( 1.0f, 0.0f, 0.0f));
-		CreatePlane(size, uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 0.5f, 0.0f), Float3( 0.0f,-1.0f, 0.0f));
-		CreatePlane(size, uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f,-0.5f, 0.0f), Float3( 0.0f, 1.0f, 0.0f));
+		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f,-0.5f), Float3( 0.0f, 0.0f, 1.0f));
+		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3(-1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f, 0.5f), Float3( 0.0f, 0.0f,-1.0f));
+		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.5f, 0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f));
+		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3(-0.5f, 0.0f, 0.0f), Float3( 1.0f, 0.0f, 0.0f));
+		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 0.5f, 0.0f), Float3( 0.0f,-1.0f, 0.0f));
+		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f,-0.5f, 0.0f), Float3( 0.0f, 1.0f, 0.0f));
 	}
 	//四角形の作られ方↓（トライアングルボックス理解用）
 	/*
@@ -222,11 +224,13 @@ public:
 		//軸の角度変更　また座標移動　行列の掛け算をしている　掛け方をかえると変になる
 		constant.world = DirectX::XMMatrixTranspose
 		(
+			DirectX::XMMatrixTranslation(axis.x, axis.y, axis.z) *
 			DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
 			DirectX::XMMatrixRotationY(angles.y) *
 			DirectX::XMMatrixRotationX(angles.x) *
 			DirectX::XMMatrixRotationZ(angles.z) *
-			DirectX::XMMatrixTranslation(position.x, position.y, position.z)
+			DirectX::XMMatrixTranslation(position.x, position.y, position.z )
+			
 		);
 		App::GetGraphicsContext().RSSetState(rasterizerState);
 
