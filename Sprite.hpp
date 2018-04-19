@@ -1,9 +1,26 @@
+//久保田_04_10------------------------------------------
+#define PI 3.141592653589793
+//------------------------------------------久保田_04_10
+
 class Sprite
 {
 public:
 	Float3 position;	//描画する位置
-	Float3 angles;		//描画する画像の角度
-	Float3 scale;		//画像のサイズ
+	Float3 angles;		//描画する物の角度
+	Float3 scale;		//描画する物のサイズ
+
+	//久保田_04_10------------------------------------------
+	//有向境界ボックスで使用するデータ
+	struct OBBData
+	{
+		//ボックスの中心座標
+		Float3 OBBpos;
+		//ボックスの方向ベクトル
+		Float3 OBBvector[3];
+		//ボックスの軸方向の長さ
+		float OBBlength[3];
+	};
+	//------------------------------------------------------
 
 	Sprite()
 	{
@@ -41,11 +58,56 @@ public:
 		mesh.angles = angles;
 		mesh.scale = scale;
 		mesh.Draw();
+		//久保田_04_10------------------------------------------
+		//現在はデバッグ用に必ず処理されるDraw関数の中に記述
+		//CreateCubeの中に記述するべき？
+		SetOBBData();
+		//------------------------------------------久保田_04_10
 	}
 
+	//-----------------------------------------------
+	void SetOBBData()
+	{
+		//OBBの中心座標設定
+		obbData.OBBpos = position;
+
+		//OBBの辺の長さを設定
+		obbData.OBBlength[0] = scale.x / 2;
+		obbData.OBBlength[1] = scale.y / 2;
+		obbData.OBBlength[2] = scale.z / 2;
+
+		//オイラー角から方向ベクトルを求める
+		float sinX = 0, sinY = 0, sinZ = 0;
+		float cosX = 0, cosY = 0, cosZ = 0;
+		float Nx = 0, Ny = 0, Nz = 0;
+		sinX = sin(angles.x * 180.0 / PI);
+		sinY = sin(angles.y * 180.0 / PI);
+		sinZ = sin(angles.z * 180.0 / PI);
+		cosX = cos(angles.x * 180.0 / PI);
+		cosY = cos(angles.y * 180.0 / PI);
+		cosZ = cos(angles.z * 180.0 / PI);
+		//D3DXVec3Normalizeを使った方がいいが今回は処理を分かりやすくするため使用せず
+
+		Nx = 1 / sqrt(pow(sinX, 2.0) + pow(cosX, 2.0));
+		Ny = 1 / sqrt(pow(sinY, 2.0) + pow(cosY, 2.0));
+		Nz = 1 / sqrt(pow(sinZ, 2.0) + pow(cosZ, 2.0));
+
+		//OBBの方向ベクトル(単位ベクトル)を設定
+		obbData.OBBvector[0] = Float3(0, Nx*sinX, Nx*cosX);
+		obbData.OBBvector[1] = Float3(Ny*cosY, 0, Ny*sinY);
+		obbData.OBBvector[2] = Float3(Nz*sinZ, Nz*cosZ, 0);
+	}
+	//------------------------------------------久保田_04_10
+
+	OBBData GetOBBData()
+	{
+		return obbData;
+	}
 private:
 	Mesh mesh;
-
+	//久保田_04_10------------------------------------------
+	OBBData obbData;
+	//------------------------------------------久保田_04_10
 	void Initialize() 
 	{
 		App::Initialize();

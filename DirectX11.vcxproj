@@ -137,6 +137,7 @@
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="Material.hpp" />
     <ClInclude Include="Mesh.hpp" />
+    <ClInclude Include="OBB.hpp" />
     <ClInclude Include="Sprite.hpp" />
     <ClInclude Include="Texture.hpp" />
     <ClInclude Include="Utility.hpp" />

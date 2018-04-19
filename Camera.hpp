@@ -133,21 +133,21 @@ private:
 
 		//深度ステンシルビューからアクセス可能なテクスチャーのサブリソースを設定
 		depthStencilView.Release();
-		D3D11_DEPTH_STENCIL_VIEW_DESC depthStancilViewDesc = {};
-		depthStancilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;//深度ステンシルビューのフォーマット
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc = {};
+		depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;//深度ステンシルビューのフォーマット
 		if (swapChainDesc.SampleDesc.Count == 0)
 		{
-			depthStancilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;//深度ステンシルリソースへのアクセス方法
-			depthStancilViewDesc.Texture2D.MipSlice = 0;//最初に使用するミップマップレベルのインデックス
+			depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;//深度ステンシルリソースへのアクセス方法
+			depthStencilViewDesc.Texture2D.MipSlice = 0;//最初に使用するミップマップレベルのインデックス
 		}
 		else
 		{
-			depthStancilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+			depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
 		}
 		App::GetGraphicsDevice().CreateDepthStencilView
 		(
 			depthTexture,			//深度ステンシル サーフェスとして機能するリソースへのポインタ
-			&depthStancilViewDesc,	//深度ステンシルビューの記述へのポインタ
+			&depthStencilViewDesc,	//深度ステンシルビューの記述へのポインタ
 			&depthStencilView		//ID3D11DepthStencilView へのポインターのアドレス
 		);
 
@@ -187,6 +187,7 @@ private:
 		renderTargetView.Release();
 		depthStencilView.Release();
 		renderTexture.Release();
+		depthTexture.Release();
 
 		App::GetGraphicsContext().Flush();//コマンドバッファー内のコマンドをGPUに送信します
 

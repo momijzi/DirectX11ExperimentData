@@ -244,7 +244,7 @@ public:
 			App::GetGraphicsContext().DrawIndexed(indices.size(), 0, 0);
 		}
 	}
-
+	
 private:
 	struct Constant
 	{
@@ -254,4 +254,6 @@ private:
 	ATL::CComPtr<ID3D11Buffer> vertexBuffer = nullptr;
 	ATL::CComPtr<ID3D11Buffer> indexBuffer = nullptr;
 	ATL::CComPtr<ID3D11RasterizerState> rasterizerState = nullptr;
+
+	
 };

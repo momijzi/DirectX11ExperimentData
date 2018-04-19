@@ -19,18 +19,27 @@ int MAIN()
 	Sprite box;
 	box.CreateData(&textureBox,1);
 
+	textureBox.SetUVNum(Float2(3.0f, 0.0f));
+	Sprite box2;
+	box2.CreateData(&textureBox, 1);
+
 	Camera camera;
+	OBB obb;
+	box.position.y = -10;
+	box.position.y = 10;
+	box.Draw();
+	box2.Draw();
 
 	while (App::Refresh())
 	{
 		if (App::GetKey(VK_RIGHT))
-			camera.position.x+= 0.1;
+			camera.position.x+= 0.1f;
 		else if (App::GetKey(VK_LEFT))
-			camera.position.x-= 0.1;
+			camera.position.x-= 0.1f;
 		if (App::GetKey(VK_UP))
-			camera.position.z+= 0.1;
+			camera.position.y+= 0.1f;
 		else if (App::GetKey(VK_DOWN))
-			camera.position.z-= 0.1;
+			camera.position.y-= 0.1f;
 		if (App::GetKey('D'))
 			camera.angles.y++;
 		else if (App::GetKey('A'))
@@ -41,7 +50,7 @@ int MAIN()
 			camera.angles.x++;
 		camera.Update();
 
-		if (App::GetKeyDown(VK_SPACE))
+		/*if (App::GetKeyDown(VK_SPACE))
 		{
 			num+= 1.0f;
 			if (num >= textureBox.GetUV().x)
@@ -58,9 +67,17 @@ int MAIN()
 			}
 			textureBox.SetUVNum(Float2(num,num2));
 			box.CreateData(&textureBox, 1);
+		}*/
+		if (!obb.OBBCheck(box.GetOBBData(), box2.GetOBBData()))
+		{
+			box.position.y -= 0.01f;
+			box.angles += 0.1f;
+			box2.position.y+= 0.01f;
+			box2.angles += 0.1f;
 		}
-			
+		
 		box.Draw();
+		box2.Draw();
 	}
 	return 0;
 }
