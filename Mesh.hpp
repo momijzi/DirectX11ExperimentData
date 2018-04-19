@@ -23,6 +23,7 @@ public:
 		material = Material(L"Shader.hlsl");
 
 		SetCullingMode(D3D11_CULL_BACK);
+
 	}
 
 	~Mesh()
@@ -38,16 +39,15 @@ public:
 		//ベクタに要素を追加
 		//ここをいじれば描画する物を変えることが可能だろう
 		//できれば引数を使って動的に作りたい
-		vertices.push_back(Vertex(Float3(0.0f, 1.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f),Float2(0.0f,0.0f)));
-		vertices.push_back(Vertex(Float3(1.0f, -1.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f),Float2(1.0f,0.0f)));
+		vertices.push_back(Vertex(Float3(0.0f, 1.0f, 0.0f), Float3(1.0f, 0.0f, 0.0f),Float2(0.5f,0.0f)));
+		vertices.push_back(Vertex(Float3(1.0f, -1.0f, 0.0f), Float3(0.0f, 1.0f, 0.0f),Float2(1.0f,1.0f)));
 		vertices.push_back(Vertex(Float3(-1.0f, -1.0f, 0.0f), Float3(0.0f, 0.0f, 1.0f),Float2(0.0f,1.0f)));
 	}
 
 	//四角のボックス作成用関数
 	void CreatePlane(
-		Float2 size = Float2(0.5f, 0.5f),					//そのままサイズ
-		Float2 uv = Float2(1.0f, 1.0f),						//表示したいUIの場所　例 uv(1,0); これで一つ右であり一番上の画像が呼べる
-		Float2 numUV = Float2(0.0f, 0.0f),					//1 / 分割数の値のxy これがないと画像の指定が無理―
+		int uv_x,int uv_y,									//画像の分割数
+		int numUV_x,int numUV_y,							//表示したいUIの場所　例 uv(1, 0); これで一つ右であり一番上の画像が呼べ
 		bool souldclear = true,								//知らんtrueじゃないと確かダメ
 		Float3 leftDirection = Float3(1.0f, 0.0f, 0.0f),	//xの座標
 		Float3 upDirection = Float3(0.0f, 1.0f, 0.0f),		//yの座標
@@ -65,14 +65,14 @@ public:
 		upDirection = DirectX::XMVector3Normalize(upDirection);
 		forwardDirection = DirectX::XMVector3Normalize(forwardDirection);
 
-		vertices.push_back(Vertex(leftDirection * -size.x + upDirection *  size.y + offset,//左上
-			-forwardDirection, Float2(uv * (1 / numUV))));
-		vertices.push_back(Vertex(leftDirection *  size.x + upDirection *  size.y + offset,//右上
-			-forwardDirection, Float2((uv.x + 1) * (1 / numUV.x),uv.y *(1 / numUV.y))));
-		vertices.push_back(Vertex(leftDirection * -size.x + upDirection * -size.y + offset,//左下
-			-forwardDirection, Float2(uv.x * ( 1 / numUV.x), (uv.y+ 1) *(1 / numUV.y))));
-		vertices.push_back(Vertex(leftDirection *  size.x + upDirection * -size.y + offset,//右下
-			-forwardDirection, Float2((uv + 1) * (1 / numUV))));
+		vertices.push_back(Vertex(leftDirection * -0.5f + upDirection *  0.5f + offset,//左上
+			-forwardDirection, Float2(uv_x * (1 / numUV_x), uv_y * (1 / numUV_y))));
+		vertices.push_back(Vertex(leftDirection *  0.5f + upDirection * 0.5f + offset,//右上
+			-forwardDirection, Float2((uv_x + 1) * (1 / numUV_x),uv_y *(1 / numUV_y))));
+		vertices.push_back(Vertex(leftDirection * -0.5f + upDirection * -0.5f + offset,//左下
+			-forwardDirection, Float2(uv_x * ( 1 / numUV_x), (uv_y+ 1) *(1 / numUV_y))));
+		vertices.push_back(Vertex(leftDirection *  0.5f + upDirection * - 0.5f + offset,//右下
+			-forwardDirection, Float2((uv_x + 1) * (1 / numUV_x), (uv_y + 1) * (1 / numUV_y))));
 
 		size_t indexOffset = vertices.size() - 4;
 		indices.push_back(indexOffset + 0);
@@ -83,9 +83,8 @@ public:
 		indices.push_back(indexOffset + 1);
 	}
 
-	void CreateCube(
-		Float2 uv = Float2(1.0f, 1.0f),
-		Float2 numUV = Float2(0.0f, 0.0f),
+	void CreateCube(int uv_x, int uv_y,	
+		int numUV_x, int numUV_y,
 		Float3 axis = Float3(0.0f,0.0f,0.0f),
 		bool souldClear = true
 	)
@@ -96,12 +95,12 @@ public:
 			indices.clear();
 		}
 
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f,-0.5f), Float3( 0.0f, 0.0f, 1.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3(-1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f, 0.5f), Float3( 0.0f, 0.0f,-1.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.5f, 0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3(-0.5f, 0.0f, 0.0f), Float3( 1.0f, 0.0f, 0.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 0.5f, 0.0f), Float3( 0.0f,-1.0f, 0.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f,-0.5f, 0.0f), Float3( 0.0f, 1.0f, 0.0f));
+		CreatePlane( uv_x, uv_y, numUV_x, numUV_y, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f,-0.5f), Float3( 0.0f, 0.0f, 1.0f));
+		CreatePlane( uv_x, uv_y, numUV_x, numUV_y, false,Float3(-1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f, 0.5f), Float3( 0.0f, 0.0f,-1.0f));
+		CreatePlane( uv_x, uv_y, numUV_x, numUV_y, false,Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.5f, 0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f));
+		CreatePlane( uv_x, uv_y, numUV_x, numUV_y, false,Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3(-0.5f, 0.0f, 0.0f), Float3( 1.0f, 0.0f, 0.0f));
+		CreatePlane( uv_x, uv_y, numUV_x, numUV_y, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 0.5f, 0.0f), Float3( 0.0f,-1.0f, 0.0f));
+		CreatePlane( uv_x, uv_y, numUV_x, numUV_y, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f,-0.5f, 0.0f), Float3( 0.0f, 1.0f, 0.0f));
 	}
 	//四角形の作られ方↓（トライアングルボックス理解用）
 	/*

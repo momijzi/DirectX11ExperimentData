@@ -14,17 +14,17 @@ public:
 	}
 	Player(Texture* tex)
 	{
-		tex->SetUVNum(Float2(0.0f, 0.0f));
+		tex->SetUVNum(0,0);
 		head.CreateData(tex, 1);
-		tex->SetUVNum(Float2(1.0f, 0.0f));
+		tex->SetUVNum(1,0);
 		body.CreateData(tex, 1);
-		tex->SetUVNum(Float2(2.0f, 0.0f));
+		tex->SetUVNum(2,0);
 		leftArm.CreateData(tex, 1);
-		tex->SetUVNum(Float2(3.0f, 0.0f));
+		tex->SetUVNum(3,0);
 		rightArm.CreateData(tex, 1);
-		tex->SetUVNum(Float2(0.0f, 1.0f));
+		tex->SetUVNum(0,1);
 		leftLeg.CreateData(tex, 1);
-		tex->SetUVNum(Float2(1.0f, 1.0f));
+		tex->SetUVNum(1,1);
 		rightLeg.CreateData(tex, 1);
 
 		head.position.y = 2.0f;

@@ -64,7 +64,11 @@ public:
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ONE;		//二番目のアルファデータソースを指定する
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;	//ブレンディング処理のアルファデータソースの組み合わせ方法を定義する
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;	//書き込みマスク
-	
+		
+		float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		device->CreateBlendState(&blendDesc, &blendState);
+		context->OMSetBlendState(blendState, blendFactor, 0xffffffff);
+
 		//バッファーリソースのデータの設定
 		D3D11_BUFFER_DESC constantBufferDesc = {};
 		constantBufferDesc.ByteWidth = sizeof(Constant);

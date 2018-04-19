@@ -43,10 +43,10 @@ public:
 		switch (mode)
 		{
 			case 0://UI		座標を追加しろー
-				mesh.CreatePlane(texSize / 2.0f,tex->GetNumUV(), tex->GetUV());
+				mesh.CreatePlane(tex->uv_x,tex->uv_y, tex->numUV_x,tex->numUV_y);
 				break;
 			case 1://四角形	上に同じ
-				mesh.CreateCube(tex->GetNumUV(), tex->GetUV());
+				mesh.CreateCube(tex->uv_x, tex->uv_y, tex->numUV_x, tex->numUV_y);
 				break;
 		}
 		mesh.Apply();

@@ -1,9 +1,11 @@
 class Texture
 {
 public:
+	int uv_x, uv_y;
+	int numUV_x, numUV_y;
+
 	Texture()
 	{
-		App::Initialize();
 	}
 	Texture(const wchar_t* const filePath)
 	{
@@ -17,32 +19,31 @@ public:
 
 	void Release()
 	{
-		uv = Float2(1.0f, 1.0f);
-		numUV = Float2(0.0f, 0.0f);
+		uv_x = 0;
+		uv_y = 0;
+		numUV_x = 0;
+		numUV_y = 0;
 	}
 	//ˆø”•ª‚¾‚¯•ªŠ„‚µ‚Ä•ªŠ„ˆê‚Â‚Ì‘å‚«‚³‚ğ“ü‚ê‚é
-	void SetDivide(Float2 uv)
+	void SetDivide(int x,int y)
 	{
-		if (uv.x >= 0 && uv.y >= 0)
-			this->uv = uv;
+		if (x >= 0 && y >= 0)
+		{
+			this->uv_x = x;
+			this->uv_y = y;
+		}
 	}
 	//•`‰æ‚µ‚½‚¢êŠ
-	void SetUVNum(Float2 numUV)
+	void SetUVNum(int x,int y)
 	{
 		//•ªŠ„”‚Í1ˆÈã
-		if (numUV.x >= 0 && numUV.y >= 0)
-			this->numUV = numUV;
+		if (x >= 0 && y >= 0)
+		{
+			this->numUV_x = x;
+			this->numUV_y = y;
+		}
 	}
-	//Œ»İw’è‚µ‚Ä‚¢‚éÀ•W
-	Float2 GetNumUV()
-	{
-		return numUV;
-	}
-	//•ªŠ„‚µ‚Ä‚¢‚é”
-	Float2 GetUV()
-	{
-		return uv;
-	}
+	
 
 	void Load(const wchar_t* const filePath)
 	{
@@ -225,9 +226,6 @@ public:
 
 private:
 	DirectX::XMINT2 size;
-	Float2 uv;			//•ªŠ„‚µ‚½ê‡‚Ç‚±‚ğ•`‰æ‚·‚é‚©
-	Float2 numUV;		//‰æ‘œ•ªŠ„” 1‚©‚ç•ªŠ„”-1
-
 	ATL::CComPtr<ID3D11Texture2D> texture = nullptr;
 	ATL::CComPtr<ID3D11ShaderResourceView> shaderResourceView = nullptr;
 	ATL::CComPtr<ID3D11SamplerState> samplerState = nullptr;

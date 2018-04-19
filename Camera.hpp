@@ -8,7 +8,7 @@ public:
 	{
 		App::Initialize();
 
-		position = Float3(0.0f, 0.0f, -5.0f);
+		position = Float3(0.0f, 0.0f,-5.0f);
 		angles = Float3(0.0f, 0.0f, 0.0f);
 
 		SetPerspective(60.0f, 0.1f, 1000.0f);
@@ -63,7 +63,6 @@ public:
 		App::GetGraphicsContext().PSSetConstantBuffers(1, 1, &constantBuffer.p);
 
 		App::GetGraphicsContext().OMSetRenderTargets(1, &renderTargetView.p, depthStencilView);
-
 
 		static float color[4] = { 1.0f,1.0f,1.0f ,1.0f };
 		App::GetGraphicsContext().ClearRenderTargetView
