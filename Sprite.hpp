@@ -23,11 +23,7 @@ public:
 	{
 		Initialize();
 	}
-	/*Sprite(const wchar_t* const filePath)
-	{
-		Initialize();
-		Load(filePath,0);
-	}*/
+
 	~Sprite()
 	{
 	}
@@ -58,11 +54,6 @@ public:
 		mesh.scale = scale;
 		mesh.axis = axis;
 		mesh.Draw();
-		//久保田_04_10------------------------------------------
-		//現在はデバッグ用に必ず処理されるDraw関数の中に記述
-		//CreateCubeの中に記述するべき？
-		SetOBBData();
-		//------------------------------------------久保田_04_10
 	}
 
 	//-----------------------------------------------
@@ -77,27 +68,43 @@ public:
 		obbData.OBBlength[2] = scale.z / 2;
 
 		//オイラー角から方向ベクトルを求める
-		float sinX = 0, sinY = 0, sinZ = 0;
-		float cosX = 0, cosY = 0, cosZ = 0;
-		float Nx = 0, Ny = 0, Nz = 0;
-		sinX = sin(angles.x * 180.0 / PI);
-		sinY = sin(angles.y * 180.0 / PI);
-		sinZ = sin(angles.z * 180.0 / PI);
-		cosX = cos(angles.x * 180.0 / PI);
-		cosY = cos(angles.y * 180.0 / PI);
-		cosZ = cos(angles.z * 180.0 / PI);
+		//float sinX = 0, sinY = 0, sinZ = 0;
+		//float cosX = 0, cosY = 0, cosZ = 0;
+		//float Nx = 0, Ny = 0, Nz = 0;
+		//float Na = 0.0f;
+		//sinX = sin(angles.x * 180.0 / PI);
+		//sinY = sin(angles.y * 180.0 / PI);
+		//sinZ = sin(angles.z * 180.0 / PI);
+		//cosX = cos(angles.x * 180.0 / PI);
+		//cosY = cos(angles.y * 180.0 / PI);
+		//cosZ = cos(angles.z * 180.0 / PI);
 		//D3DXVec3Normalizeを使った方がいいが今回は処理を分かりやすくするため使用せず
+		//Na = 1 / sqrt(pow(sinX, 2.0) + pow(sinY, 2.0) + pow(sinZ, 2.0) + 1);
+		//Float3 angleNormal = Float3(angles)*Na;
 
-		Nx = 1 / sqrt(pow(sinX, 2.0) + pow(cosX, 2.0));
-		Ny = 1 / sqrt(pow(sinY, 2.0) + pow(cosY, 2.0));
-		Nz = 1 / sqrt(pow(sinZ, 2.0) + pow(cosZ, 2.0));
+		//(sinX,cosX)
+		//(sinX*cosZ,sinY*cosX,sinZ*cosY)
+		//Nx = 1 / sqrt(pow(sinX, 2.0) + pow(cosX, 2.0));
+		//Ny = 1 / sqrt(pow(sinY, 2.0) + pow(cosY, 2.0));
+		//Nz = 1 / sqrt(pow(sinZ, 2.0) + pow(cosZ, 2.0));
+		//Nx = 1 / sqrt(pow(0.5f*PI, 2.0) + pow(angles.y, 2.0) + pow(angles.z, 2.0));
+		//Ny = 1 / sqrt(pow(angles.x, 2.0) + pow(0.5f*PI, 2.0) + pow(angles.z, 2.0));
+		//Nz = 1 / sqrt(pow(angles.x, 2.0) + pow(angles.y, 2.0) + pow(0.5f*PI, 2.0));
 
 		//OBBの方向ベクトル(単位ベクトル)を設定
-		obbData.OBBvector[0] = Float3(0, Nx*sinX, Nx*cosX);
-		obbData.OBBvector[1] = Float3(Ny*cosY, 0, Ny*sinY);
-		obbData.OBBvector[2] = Float3(Nz*sinZ, Nz*cosZ, 0);
+		//obbData.OBBvector[0] = Float3(0, Nx*sinX, Nx*cosX);
+		//obbData.OBBvector[1] = Float3(Ny*cosY, 0, Ny*sinY);
+		//obbData.OBBvector[2] = Float3(Nz*sinZ, Nz*cosZ, 0);
+		obbData.OBBvector[0] = Float3(mesh.GetWorld(0));
+		obbData.OBBvector[1] = Float3(mesh.GetWorld(1));
+		obbData.OBBvector[2] = Float3(mesh.GetWorld(2));
 	}
 	//------------------------------------------久保田_04_10
+
+	void UpdateOBBData()
+	{
+		SetOBBData();
+	}
 
 	OBBData GetOBBData()
 	{

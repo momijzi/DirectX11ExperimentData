@@ -1,4 +1,3 @@
-#pragma once
 //参考にしたサイト
 //http://marupeke296.com/COL_3D_No13_OBBvsOBB.html
 //有向境界ボックス
@@ -67,7 +66,12 @@ public:
 		Sprite::OBBData obb[2];
 		obb[0] = obb1;
 		obb[1] = obb2;
-		Float3 L = Float3(fabs(obb[0].OBBpos.x - obb[1].OBBpos.x), fabs(obb[0].OBBpos.y - obb[1].OBBpos.y), fabs(obb[0].OBBpos.z - obb[1].OBBpos.z));
+		Float3 L = Float3
+		(
+			fabs(obb[0].OBBpos.x - obb[1].OBBpos.x),
+			fabs(obb[0].OBBpos.y - obb[1].OBBpos.y),
+			fabs(obb[0].OBBpos.z - obb[1].OBBpos.z)
+		);
 		//float length = sqrt(pow(L.x, 2.0) + pow(L.y, 2.0) + pow(L.z, 2.0));
 		float length = 0;
 		float obbLength[2];
@@ -75,8 +79,8 @@ public:
 
 		//obb1のz方向
 		obbLength[0] = obb[0].OBBlength[2];
-		obbLength[1] = fabs(obb[1].OBBlength[0] * obb[0].OBBvector[2].x) + 
-			fabs(obb[1].OBBlength[1] * obb[0].OBBvector[2].y) + 
+		obbLength[1] = fabs(obb[1].OBBlength[0] * obb[0].OBBvector[2].x) +
+			fabs(obb[1].OBBlength[1] * obb[0].OBBvector[2].y) +
 			fabs(obb[1].OBBlength[2] * obb[0].OBBvector[2].z);
 		length = fabs(Float3Dot(obb[1].OBBvector[2], L));
 		if (length > obbLength[0] + obbLength[1])
@@ -88,7 +92,7 @@ public:
 		//obb1のy方向
 		obbLength[0] = obb[0].OBBlength[1];
 		obbLength[1] = fabs(obb[1].OBBlength[0] * obb[0].OBBvector[1].x) +
-			fabs(obb[1].OBBlength[1] * obb[0].OBBvector[1].y) + 
+			fabs(obb[1].OBBlength[1] * obb[0].OBBvector[1].y) +
 			fabs(obb[1].OBBlength[2] * obb[0].OBBvector[1].z);
 		length = fabs(Float3Dot(obb[1].OBBvector[1], L));
 		if (length > obbLength[0] + obbLength[1])
@@ -99,8 +103,8 @@ public:
 
 		//obb1のx方向
 		obbLength[0] = obb[0].OBBlength[0];
-		obbLength[1] = fabs(obb[1].OBBlength[0] * obb[0].OBBvector[0].x) + 
-			fabs(obb[1].OBBlength[1] * obb[0].OBBvector[0].y) + 
+		obbLength[1] = fabs(obb[1].OBBlength[0] * obb[0].OBBvector[0].x) +
+			fabs(obb[1].OBBlength[1] * obb[0].OBBvector[0].y) +
 			fabs(obb[1].OBBlength[2] * obb[0].OBBvector[0].z);
 		length = fabs(Float3Dot(obb[1].OBBvector[0], L));
 		if (length > obbLength[0] + obbLength[1])
@@ -110,8 +114,8 @@ public:
 		}
 
 		//obb2のz方向
-		obbLength[0] = fabs(obb[0].OBBlength[0] * obb[1].OBBvector[2].x) + 
-			fabs(obb[0].OBBlength[1] * obb[1].OBBvector[2].y) + 
+		obbLength[0] = fabs(obb[0].OBBlength[0] * obb[1].OBBvector[2].x) +
+			fabs(obb[0].OBBlength[1] * obb[1].OBBvector[2].y) +
 			fabs(obb[0].OBBlength[2] * obb[1].OBBvector[2].z);
 		obbLength[1] = obb[1].OBBlength[2];
 		length = fabs(Float3Dot(obb[0].OBBvector[2], L));
@@ -122,8 +126,8 @@ public:
 		}
 
 		//obb2のy方向
-		obbLength[0] = fabs(obb[0].OBBlength[0] * obb[1].OBBvector[1].x) + 
-			fabs(obb[0].OBBlength[1] * obb[1].OBBvector[1].y) + 
+		obbLength[0] = fabs(obb[0].OBBlength[0] * obb[1].OBBvector[1].x) +
+			fabs(obb[0].OBBlength[1] * obb[1].OBBvector[1].y) +
 			fabs(obb[0].OBBlength[2] * obb[1].OBBvector[1].z);
 		obbLength[1] = obb[1].OBBlength[1];
 		length = fabs(Float3Dot(obb[0].OBBvector[1], L));
@@ -134,8 +138,8 @@ public:
 		}
 
 		//obb2のx方向
-		obbLength[0] = fabs(obb[0].OBBlength[0] * obb[1].OBBvector[0].x) + 
-			fabs(obb[0].OBBlength[1] * obb[1].OBBvector[0].y) + 
+		obbLength[0] = fabs(obb[0].OBBlength[0] * obb[1].OBBvector[0].x) +
+			fabs(obb[0].OBBlength[1] * obb[1].OBBvector[0].y) +
 			fabs(obb[0].OBBlength[2] * obb[1].OBBvector[0].z);
 		obbLength[1] = obb[1].OBBlength[0];
 		length = fabs(Float3Dot(obb[0].OBBvector[0], L));

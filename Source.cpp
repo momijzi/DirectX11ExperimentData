@@ -14,6 +14,7 @@ int MAIN()
 
 	bool flagPunch = false;
 	bool flagReturn = false;
+	bool flagA = false;
 
 	Camera camera;
 
@@ -28,12 +29,14 @@ int MAIN()
 	Sprite box;
 	box.CreateData(&textureBox,1);
 
-	box.position.y = 5.0f;
-	box2.angles.z = (float)(PI / 180 * 45);
-
+	box.SetOBBData();
+	box2.SetOBBData();
 	
+	box.scale = 2.0f;
 
-	//box.Draw();
+	box.Draw();
+	box2.Draw();
+
 	Player player(&textureBox);
 	OBB obb;
 
@@ -122,17 +125,30 @@ int MAIN()
 			textureBox.SetUVNum(Float2(num,num2));
 			box.CreateData(&textureBox, 1);
 		}*/
-		
-		/*if (!obb.OBBCheck(box.GetOBBData(), box2.GetOBBData()))
+
+		//欠点　一回しか無理　任意にフラグを切り替える必要あり
+		//複数のobjと接触判定とる場合のフラグがだる死ぬ
+		/*if(!flagA)
 		{
-			box.position.y -= 0.1f;
-			num += 0.1f;
-			box.angles.y += (float)(PI / 180 * num);
+			box.position.y -= 0.01f;
+
+			box.angles.y += (float)(-PI / 180 * 2);
+			box.angles.x += (float)(-PI / 180 * 4);
+			box2.angles.y += (float)(-PI / 180 * 4);
+			box2.angles.x += (float)(-PI / 180 * 4);
+
+			box.SetOBBData();
+			box2.SetOBBData();
+			if (obb.OBBCheck(box.GetOBBData(), box2.GetOBBData()))
+			{
+				flagA = true;
+				box.SetOBBData();
+			}
 		}*/
-		
 		
 		box.Draw();
 		box2.Draw();
+		
 	}
 	return 0;
 }

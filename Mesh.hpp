@@ -29,7 +29,11 @@ public:
 	{
 
 	}
-
+	//ワールドのMatrixをベクトルとして取得
+	DirectX::XMVECTOR GetWorld(int num)
+	{
+		return constant.world.r[num]; 
+	}
 	//トライアングルリスト作成
 	void CreateTriangle()
 	{
