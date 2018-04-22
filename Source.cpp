@@ -1,5 +1,4 @@
 #include"App.hpp"
-#include"Library.cpp"
 
 using namespace std;
 using namespace DirectX;
@@ -16,62 +15,129 @@ int MAIN()
 	bool flagReturn = false;
 	bool flagA = false;
 
-	Camera camera;
+	//textureのuvを設定するためのもの
+	struct SetUvData
+	{
+		Float2 uvData[6] = {};
+		//前面同じuvに設定
+		void SetAll(Float2 numUV)
+		{
+			for (int i = 0; i < 6; i++)
+			{
+				uvData[i] = numUV;
+			}
+		}
+		//上と下以外のuv設定
+		void SetAround(Float2 numUV)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				uvData[i] = numUV;
+			}
+		}
+		//前面のuv設定
+		void SetFront(Float2 numUV)
+		{
+			uvData[0] = numUV;
+		}
+		//後面のuv設定
+		void SetBack(Float2 numUV)
+		{
+			uvData[1] = numUV;
+		}
+		//左面のuv設定
+		void SetLeft(Float2 numUV)
+		{
+			uvData[2] = numUV;
+		}
+		//前面のuv設定
+		void SetRight(Float2 numUV)
+		{
+			uvData[3] = numUV;
+		}
+		//上面のuv設定
+		void SetUp(Float2 numUV)
+		{
+			uvData[4] = numUV;
+		}
+		//下面のuv設定
+		void SetDown(Float2 numUV)
+		{
+			uvData[5] = numUV;
+		}
+	};
+	SetUvData setUvData;
+
+	Camera::CameraMoveMode cameraMode = Camera::CameraMoveMode::PLANE;
+
+	Camera camera(cameraMode);
 
 	Texture textureBox(L"texture/TestTexture.jpg");
-	textureBox.SetDivide(Float2(4.0f, 2.0f));
+	textureBox.texUVData.SetDivide(Float2(4.0f, 2.0f));
 
-	textureBox.SetUVNum(Float2(3.0f, 1.0f));
-	Sprite box2;
-	box2.CreateData(&textureBox, 1);
-
-	textureBox.SetUVNum(Float2(0.0f, 0.0f));
 	Sprite box;
-	box.CreateData(&textureBox,1);
+	setUvData.SetAll(Float2(0.0f,0.0f));
+	textureBox.texUVData.SetUVNum(setUvData.uvData);
+	box.CreateData(&textureBox, 1);
 
-	box.SetOBBData();
-	box2.SetOBBData();
+	Sprite box2;
+	setUvData.SetAround(Float2(2.0f, 1.0f));
+	textureBox.texUVData.SetUVNum(setUvData.uvData);
+	box2.CreateData(&textureBox, 1);
 	
-	box.scale = 2.0f;
+	box.position.y = 5;
+
 
 	box.Draw();
 	box2.Draw();
-
-	Player player(&textureBox);
+	box.SetOBBData();
+	box2.SetOBBData();
 	OBB obb;
 
 	while (App::Refresh())
 	{
-		if (App::GetKey(VK_RIGHT))
+		//カメラの操作関連
 		{
-			camera.position.z += 0.1f;
-			player.PlayerMove(Float3(0.3f,0.0f, 0.0f));
-		}
-		else if (App::GetKey(VK_LEFT))
-		{
-			camera.position.z-= 0.1f;
-			player.PlayerMove(Float3(-0.3f, 0.0f, 0.0f));
-		}
-		if (App::GetKey(VK_UP))
-		{
-			camera.position.y += 0.1f;
-			player.PlayerMove(Float3(0.0f, 0.3f, 0.0f));
-		}
-		else if (App::GetKey(VK_DOWN))
-		{
-			camera.position.y -= 0.1f;
-			player.PlayerMove(Float3(0.0f, -0.3f, 0.0f));
-		}
-		if (App::GetKey('D'))
-			camera.angles.y++;
-		else if (App::GetKey('A'))
-			camera.angles.y--;
-		if (App::GetKey('W'))
-			camera.angles.x--;
-		else if (App::GetKey('S'))
-			camera.angles.x++;
-		camera.Update();
+			if (App::GetKey('W') || App::GetKey('A') || App::GetKey('S') || App::GetKey('D'))
+			{
+				if (App::GetKey('D'))
+				{
+					camera.angles.y += 1.0f;
+				}
+				else if (App::GetKey('A'))
+				{
+					camera.angles.y -= 1.0f;
+				}
+				if (App::GetKey('W'))
+				{
+					camera.angles.x -= 1.0f;
+				}
+				else if (App::GetKey('S'))
+				{
+					camera.angles.x += 1.0f;
+				}
+				camera.SetCameraDirection();
+			}
 
+			if (App::GetKey(VK_UP))
+			{
+				camera.CameraMoveAdvance(0.1f);
+			}
+			else if (App::GetKey(VK_DOWN))
+			{
+				camera.CameraMoveAdvance(-0.1f);
+			}
+
+			if (App::GetKey(VK_RIGHT))
+			{
+				camera.CameraMoveSide(0.1f);
+			}
+			else if (App::GetKey(VK_LEFT))
+			{
+				camera.CameraMoveSide(-0.1f);
+			}
+			camera.Update();
+		}
 		/*if (App::GetKey('L'))
 		{
 			player.leftArm.angles.x += (float)(PI / 180 * 1);
@@ -106,49 +172,23 @@ int MAIN()
 			}
 		}
 
-		player.Update();*/
-		/*if (App::GetKeyDown(VK_SPACE))
-		{
-			num+= 1.0f;
-			if (num >= textureBox.GetUV().x)
-			{
-				if (num2 == 0.0f)
-				{
-					num2 = 1.0f;
-				}
-				else
-				{
-					num2 = 0.0f;
-				}
-				num = 0.0f;
-			}
-			textureBox.SetUVNum(Float2(num,num2));
-			box.CreateData(&textureBox, 1);
-		}*/
-
+		player.Update();
+		*/
+		
 		//欠点　一回しか無理　任意にフラグを切り替える必要あり
 		//複数のobjと接触判定とる場合のフラグがだる死ぬ
-		/*if(!flagA)
+		if(!obb.OBBCheck(box.GetOBBData(), box2.GetOBBData()))
 		{
 			box.position.y -= 0.01f;
 
-			box.angles.y += (float)(-PI / 180 * 2);
-			box.angles.x += (float)(-PI / 180 * 4);
-			box2.angles.y += (float)(-PI / 180 * 4);
-			box2.angles.x += (float)(-PI / 180 * 4);
+			box2.angles.y += 0.01f;
+			box2.angles.z += 0.01f;
 
 			box.SetOBBData();
 			box2.SetOBBData();
-			if (obb.OBBCheck(box.GetOBBData(), box2.GetOBBData()))
-			{
-				flagA = true;
-				box.SetOBBData();
-			}
-		}*/
-		
+		}
 		box.Draw();
 		box2.Draw();
-		
 	}
 	return 0;
 }

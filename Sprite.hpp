@@ -6,6 +6,13 @@ public:
 	Float3 scale;		//描画する物のサイズ
 	Float3 axis;		//軸をその物体のどれだけずらしているか
 
+	Float4 BaseDir[3]
+	{
+		Float4(0,0,1,1),
+		Float4(1,0,0,1),
+		Float4(0,1,0,1)
+	};
+
 	//久保田_04_10------------------------------------------
 	//有向境界ボックスで使用するデータ
 	struct OBBData
@@ -39,10 +46,10 @@ public:
 		switch (mode)
 		{
 			case 0://UI		座標を追加しろー
-				mesh.CreatePlane(texSize / 2.0f,tex->GetNumUV(), tex->GetUV());
+				mesh.CreatePlane(texSize / 2.0f);
 				break;
 			case 1://四角形	上に同じ
-				mesh.CreateCube(tex->GetNumUV(), tex->GetUV());
+				mesh.CreateCube(tex->GetTexUVData());
 				break;
 		}
 		mesh.Apply();
@@ -55,10 +62,45 @@ public:
 		mesh.axis = axis;
 		mesh.Draw();
 	}
+	Float4 Float4Transform(Float4 f4, DirectX::XMMATRIX *mat)
+	{
+		Float4 f;
+		f.x = f4.x*DirectX::XMVectorGetX(mat->r[0]) + f4.y*DirectX::XMVectorGetY(mat->r[0]) + f4.z*DirectX::XMVectorGetZ(mat->r[0]) + f4.w*DirectX::XMVectorGetW(mat->r[0]);
+		f.y = f4.x*DirectX::XMVectorGetX(mat->r[1]) + f4.y*DirectX::XMVectorGetY(mat->r[1]) + f4.z*DirectX::XMVectorGetZ(mat->r[1]) + f4.w*DirectX::XMVectorGetW(mat->r[1]);
+		f.z = f4.x*DirectX::XMVectorGetX(mat->r[2]) + f4.y*DirectX::XMVectorGetY(mat->r[2]) + f4.z*DirectX::XMVectorGetZ(mat->r[2]) + f4.w*DirectX::XMVectorGetW(mat->r[2]);
+		f.w = f4.x*DirectX::XMVectorGetX(mat->r[3]) + f4.y*DirectX::XMVectorGetY(mat->r[3]) + f4.z*DirectX::XMVectorGetZ(mat->r[3]) + f4.w*DirectX::XMVectorGetW(mat->r[3]);
+		return f;
+	}
 
 	//-----------------------------------------------
 	void SetOBBData()
 	{
+		//mat1 2は回転行列
+		DirectX::XMMATRIX mat1, mat2, mat3;
+		mat1 = DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(angles.x));
+		mat2 = DirectX::XMMatrixRotationY(DirectX::XMConvertToRadians(angles.y));
+		mat3 = DirectX::XMMatrixRotationZ(DirectX::XMConvertToRadians(angles.z));
+		Float4 v4[3];//基本の向きのベクトルに行列1,2の回転を適用した状態
+					 //を計算して代入
+					 //vector4なのは行列の型が4x4なのでそれに合わせた
+		Float3 v3[3];
+
+		for (int i = 0; i < 3; i++)
+		{
+			//v4[i] = DirectX::XMVector4Transform(BaseDir[i], mat1);//行列1の回転で変換
+			//
+			//v4[i] = DirectX::XMVector4Transform(v4[i], mat2);
+
+			//v4[i] = DirectX::XMVector4Transform(v4[i], mat3);
+
+			v4[i] = Float4Transform(BaseDir[i], &mat1);
+			v4[i] = Float4Transform(v4[i], &mat2);
+			v4[i] = Float4Transform(v4[i], &mat3);
+
+			//vec4からvec3にデータを移す
+			v3[i] = Float3(v4[i].x, v4[i].y, v4[i].z);
+		}
+
 		//OBBの中心座標設定
 		obbData.OBBpos = position;
 
@@ -67,37 +109,10 @@ public:
 		obbData.OBBlength[1] = scale.y / 2;
 		obbData.OBBlength[2] = scale.z / 2;
 
-		//オイラー角から方向ベクトルを求める
-		//float sinX = 0, sinY = 0, sinZ = 0;
-		//float cosX = 0, cosY = 0, cosZ = 0;
-		//float Nx = 0, Ny = 0, Nz = 0;
-		//float Na = 0.0f;
-		//sinX = sin(angles.x * 180.0 / PI);
-		//sinY = sin(angles.y * 180.0 / PI);
-		//sinZ = sin(angles.z * 180.0 / PI);
-		//cosX = cos(angles.x * 180.0 / PI);
-		//cosY = cos(angles.y * 180.0 / PI);
-		//cosZ = cos(angles.z * 180.0 / PI);
-		//D3DXVec3Normalizeを使った方がいいが今回は処理を分かりやすくするため使用せず
-		//Na = 1 / sqrt(pow(sinX, 2.0) + pow(sinY, 2.0) + pow(sinZ, 2.0) + 1);
-		//Float3 angleNormal = Float3(angles)*Na;
+		obbData.OBBvector[0] = Float3(DirectX::XMVector3Normalize(v3[0]));
+		obbData.OBBvector[1] = Float3(DirectX::XMVector3Normalize(v3[1]));
+		obbData.OBBvector[2] = Float3(DirectX::XMVector3Normalize(v3[2]));
 
-		//(sinX,cosX)
-		//(sinX*cosZ,sinY*cosX,sinZ*cosY)
-		//Nx = 1 / sqrt(pow(sinX, 2.0) + pow(cosX, 2.0));
-		//Ny = 1 / sqrt(pow(sinY, 2.0) + pow(cosY, 2.0));
-		//Nz = 1 / sqrt(pow(sinZ, 2.0) + pow(cosZ, 2.0));
-		//Nx = 1 / sqrt(pow(0.5f*PI, 2.0) + pow(angles.y, 2.0) + pow(angles.z, 2.0));
-		//Ny = 1 / sqrt(pow(angles.x, 2.0) + pow(0.5f*PI, 2.0) + pow(angles.z, 2.0));
-		//Nz = 1 / sqrt(pow(angles.x, 2.0) + pow(angles.y, 2.0) + pow(0.5f*PI, 2.0));
-
-		//OBBの方向ベクトル(単位ベクトル)を設定
-		//obbData.OBBvector[0] = Float3(0, Nx*sinX, Nx*cosX);
-		//obbData.OBBvector[1] = Float3(Ny*cosY, 0, Ny*sinY);
-		//obbData.OBBvector[2] = Float3(Nz*sinZ, Nz*cosZ, 0);
-		obbData.OBBvector[0] = Float3(mesh.GetWorld(0));
-		obbData.OBBvector[1] = Float3(mesh.GetWorld(1));
-		obbData.OBBvector[2] = Float3(mesh.GetWorld(2));
 	}
 	//------------------------------------------久保田_04_10
 

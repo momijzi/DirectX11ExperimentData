@@ -145,6 +145,7 @@ private:
 		return *input.get();
 	}
 };
+#include"Map.hpp"
 #include"Texture.hpp"
 #include"Material.hpp"
 #include"Camera.hpp"

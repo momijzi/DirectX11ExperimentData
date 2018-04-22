@@ -14,17 +14,11 @@ public:
 	}
 	Player(Texture* tex)
 	{
-		tex->SetUVNum(Float2(0.0f, 0.0f));
 		head.CreateData(tex, 1);
-		tex->SetUVNum(Float2(1.0f, 0.0f));
 		body.CreateData(tex, 1);
-		tex->SetUVNum(Float2(2.0f, 0.0f));
 		leftArm.CreateData(tex, 1);
-		tex->SetUVNum(Float2(3.0f, 0.0f));
 		rightArm.CreateData(tex, 1);
-		tex->SetUVNum(Float2(0.0f, 1.0f));
 		leftLeg.CreateData(tex, 1);
-		tex->SetUVNum(Float2(1.0f, 1.0f));
 		rightLeg.CreateData(tex, 1);
 
 		head.position.y = 2.0f;
@@ -35,17 +29,15 @@ public:
 
 		leftArm.position.x = -2.0f;
 		leftArm.scale.y = 2.0f;
-		leftArm.axis.y = -leftArm.scale.y / 4;
-		leftArm.position.y -= leftArm.axis.y;
 
 		rightArm.position.x = 2.0f;
 		rightArm.scale.y = 2.0f;
 
 		leftLeg.position.x = -1.0f;
-		leftLeg.position.y = -2.0f;
+		leftLeg.position.y = -3.0f;
 
 		rightLeg.position.x =  1.0f;
-		rightLeg.position.y = -2.0f;
+		rightLeg.position.y = -3.0f;
 	}
 	~Player()
 	{

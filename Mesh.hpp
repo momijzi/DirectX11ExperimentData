@@ -50,8 +50,8 @@ public:
 	//四角のボックス作成用関数
 	void CreatePlane(
 		Float2 size = Float2(0.5f, 0.5f),					//そのままサイズ
-		Float2 uv = Float2(1.0f, 1.0f),						//表示したいUIの場所　例 uv(1,0); これで一つ右であり一番上の画像が呼べる
-		Float2 numUV = Float2(0.0f, 0.0f),					//1 / 分割数の値のxy これがないと画像の指定が無理―
+		Float2 uv = Float2(1.0f, 1.0f),						//テクスチャの分割数
+		Float2 numUV = Float2(0.0f, 0.0f),					//現在描画したい画像
 		bool souldclear = true,								//知らんtrueじゃないと確かダメ
 		Float3 leftDirection = Float3(1.0f, 0.0f, 0.0f),	//xの座標
 		Float3 upDirection = Float3(0.0f, 1.0f, 0.0f),		//yの座標
@@ -69,13 +69,13 @@ public:
 		forwardDirection = DirectX::XMVector3Normalize(forwardDirection);
 
 		vertices.push_back(Vertex(leftDirection * -size.x + upDirection *  size.y + offset,//左上
-			-forwardDirection, Float2(uv * (1 / numUV))));
+			-forwardDirection, Float2(numUV * (1 / uv))));
 		vertices.push_back(Vertex(leftDirection *  size.x + upDirection *  size.y + offset,//右上
-			-forwardDirection, Float2((uv.x + 1) * (1 / numUV.x),uv.y *(1 / numUV.y))));
+			-forwardDirection, Float2((numUV.x + 1) * (1 / uv.x),numUV.y *(1 / uv.y))));
 		vertices.push_back(Vertex(leftDirection * -size.x + upDirection * -size.y + offset,//左下
-			-forwardDirection, Float2(uv.x * ( 1 / numUV.x), (uv.y+ 1) *(1 / numUV.y))));
+			-forwardDirection, Float2(numUV.x * ( 1 / uv.x), (numUV.y+ 1) *(1 / uv.y))));
 		vertices.push_back(Vertex(leftDirection *  size.x + upDirection * -size.y + offset,//右下
-			-forwardDirection, Float2((uv + 1) * (1 / numUV))));
+			-forwardDirection, Float2((numUV + 1) * (1 / uv))));
 
 		size_t indexOffset = vertices.size() - 4;
 		indices.push_back(indexOffset + 0);
@@ -87,8 +87,7 @@ public:
 	}
 
 	void CreateCube(
-		Float2 uv = Float2(1.0f, 1.0f),
-		Float2 numUV = Float2(0.0f, 0.0f),
+		Texture::TexUVData texUVData,
 		Float3 axis = Float3(0.0f,0.0f,0.0f),
 		bool souldClear = true
 	)
@@ -99,12 +98,12 @@ public:
 			indices.clear();
 		}
 
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f,-0.5f), Float3( 0.0f, 0.0f, 1.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3(-1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f, 0.5f), Float3( 0.0f, 0.0f,-1.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.5f, 0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3(-0.5f, 0.0f, 0.0f), Float3( 1.0f, 0.0f, 0.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 0.5f, 0.0f), Float3( 0.0f,-1.0f, 0.0f));
-		CreatePlane(Float2(0.5f, 0.5f), uv, numUV, false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f,-0.5f, 0.0f), Float3( 0.0f, 1.0f, 0.0f));
+		CreatePlane(Float2(0.5f, 0.5f), texUVData.uv, texUVData.numUV[0], false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f,-0.5f), Float3( 0.0f, 0.0f, 1.0f));//前
+		CreatePlane(Float2(0.5f, 0.5f), texUVData.uv, texUVData.numUV[1], false,Float3(-1.0f, 0.0f, 0.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.0f, 0.0f, 0.5f), Float3( 0.0f, 0.0f,-1.0f));//後
+		CreatePlane(Float2(0.5f, 0.5f), texUVData.uv, texUVData.numUV[2], false,Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3( 0.5f, 0.0f, 0.0f), Float3(-1.0f, 0.0f, 0.0f));//左
+		CreatePlane(Float2(0.5f, 0.5f), texUVData.uv, texUVData.numUV[3], false,Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f, 1.0f, 0.0f), Float3(-0.5f, 0.0f, 0.0f), Float3( 1.0f, 0.0f, 0.0f));//右
+		CreatePlane(Float2(0.5f, 0.5f), texUVData.uv, texUVData.numUV[4], false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f, 1.0f), Float3( 0.0f, 0.5f, 0.0f), Float3( 0.0f,-1.0f, 0.0f));//上
+		CreatePlane(Float2(0.5f, 0.5f), texUVData.uv, texUVData.numUV[5], false,Float3( 1.0f, 0.0f, 0.0f), Float3( 0.0f, 0.0f,-1.0f), Float3( 0.0f,-0.5f, 0.0f), Float3( 0.0f, 1.0f, 0.0f));//下
 	}
 	//四角形の作られ方↓（トライアングルボックス理解用）
 	/*

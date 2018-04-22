@@ -1,47 +1,58 @@
 class Texture
 {
 public:
+	struct TexUVData
+	{
+		Float2 uv;			//‰æ‘œ•ªŠ„” 1‚©‚ç•ªŠ„”-1
+		Float2 numUV[6];	//•ªŠ„‚µ‚½ê‡‚Ç‚±‚ğ•`‰æ‚·‚é‚©(lŠp)
+
+		TexUVData()
+		{
+			uv = Float2(1.0f, 1.0f);
+			for (int i = 0; i < 6;i++)
+			{
+				numUV[i] = Float2(0.0f, 0.0f);
+			}
+		}
+
+		//ˆø”•ª‚¾‚¯•ªŠ„‚µ‚Ä•ªŠ„ˆê‚Â‚Ì‘å‚«‚³‚ğ“ü‚ê‚é
+		void SetDivide(Float2 uv)
+		{
+			if (uv.x >= 0 && uv.y >= 0)
+				this->uv = uv;
+		}
+
+		//•`‰æ‚µ‚½‚¢êŠ(lŠp‚Ìê‡6–Ê•ª‚Ìuv‚ğw’è‚·‚é‚±‚Æ)
+		void SetUVNum(Float2 numUV[])
+		{
+			//•ªŠ„”‚Í1ˆÈã
+			for (int i = 0; i < 6; i++)
+			{
+				if (numUV[i].x >= 0 && numUV[i].y >= 0 && numUV[i].x < uv.x && numUV[i].y < uv.y)
+					this->numUV[i] = numUV[i];
+			}
+		}
+	};
+	TexUVData texUVData;
+
 	Texture()
 	{
 		App::Initialize();
 	}
 	Texture(const wchar_t* const filePath)
 	{
-		Release();
 		App::Initialize();
 		Load(filePath);
 	}
 	~Texture()
 	{
-	}
 
-	void Release()
-	{
-		uv = Float2(1.0f, 1.0f);
-		numUV = Float2(0.0f, 0.0f);
 	}
-	//ˆø”•ª‚¾‚¯•ªŠ„‚µ‚Ä•ªŠ„ˆê‚Â‚Ì‘å‚«‚³‚ğ“ü‚ê‚é
-	void SetDivide(Float2 uv)
+	
+	
+	TexUVData GetTexUVData()
 	{
-		if (uv.x >= 0 && uv.y >= 0)
-			this->uv = uv;
-	}
-	//•`‰æ‚µ‚½‚¢êŠ
-	void SetUVNum(Float2 numUV)
-	{
-		//•ªŠ„”‚Í1ˆÈã
-		if (numUV.x >= 0 && numUV.y >= 0)
-			this->numUV = numUV;
-	}
-	//Œ»İw’è‚µ‚Ä‚¢‚éÀ•W
-	Float2 GetNumUV()
-	{
-		return numUV;
-	}
-	//•ªŠ„‚µ‚Ä‚¢‚é”
-	Float2 GetUV()
-	{
-		return uv;
+		return texUVData;
 	}
 
 	void Load(const wchar_t* const filePath)
@@ -222,12 +233,9 @@ public:
 		);
 	}
 
-
 private:
 	DirectX::XMINT2 size;
-	Float2 uv;			//•ªŠ„‚µ‚½ê‡‚Ç‚±‚ğ•`‰æ‚·‚é‚©
-	Float2 numUV;		//‰æ‘œ•ªŠ„” 1‚©‚ç•ªŠ„”-1
-
+	
 	ATL::CComPtr<ID3D11Texture2D> texture = nullptr;
 	ATL::CComPtr<ID3D11ShaderResourceView> shaderResourceView = nullptr;
 	ATL::CComPtr<ID3D11SamplerState> samplerState = nullptr;
